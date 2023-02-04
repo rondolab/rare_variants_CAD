@@ -23,11 +23,14 @@ regenie --step 1 --extract /${path}/qc_pass.snplist --keep /${path}/IDs_common.i
 
 #Ones *.loco files are stored in ${path}/step1/, run regenie step 2 for association testing.
 
-#Run regenie step 2 for single variant association test.
-for i in $(seq 1 22); do regenie --step 2 --bed plink_exome_files_chr${i} --keep IDs_common.id --extract qc_pass_exome.snplist --phenoFile phenotype_file.txt --covarFile covariates_file.txt --pred fit_l1_pred.list --bsize 500 --out single_variant_chr${i} ; done
-
-#Run regenie step 2 for biomarker association test.
-for i in $(seq 1 22); do regenie --step 2 --bed plink_exome_files_chr${i} --keep IDs_common.id --extract qc_pass_exome.snplist --phenoFile phenotype_file_biomarkers.txt --covarFile covariates_file.txt --pred fit_l1_pred.list --bsize 500 --out biomarkers_chr${i} ; done
+#Run regenie step 2 to test single variants for association with ISCAD.
+for i in $(seq 1 22); do regenie --step 2 --bed plink_exome_files_chr${i} --keep IDs_common.id --extract qc_pass_exome.snplist --phenoFile phenotype_file.txt --covarFile covariates_file.txt --pred step1/fit_l1_pred.list --bsize 500 --out SNP_association/single_variant_chr${i} ; done
 
 #Run regenie step 2 for gene-burden association test.
-for i in $(seq 1 22); do regenie --step 2 --bed plink_exome_files_chr${i} --keep IDs_common.id --extract qc_pass_exome.snplist --phenoFile phenotype_file.txt --covarFile covariates_file.txt --anno-file Anno_file.txt --set-list Set_list.txt --mask-def Mask_file.txt --pred fit_l1_pred.list --bsize 500 --out gene_burden_chr${i}  --vc-tests skat,skato,acato-full ; done
+for i in $(seq 1 22); do regenie --step 2 --bed plink_exome_files_chr${i} --keep IDs_common.id --extract qc_pass_exome_gene_burden.snplist --phenoFile phenotype_file.txt --covarFile covariates_file.txt --anno-file Anno_file.txt --set-list Set_list.txt --mask-def Mask_file.txt --pred step1/fit_l1_pred.list --bsize 500 --out gene_burden/gene_burden_chr${i}  --vc-tests skat,skato,acato-full ; done
+
+#Run regenie step 2 to test single variants for association with clinical biomarkers.
+for i in $(seq 1 22); do regenie --step 2 --bed plink_exome_files_chr${i} --keep IDs_common.id --extract qc_pass_exome.snplist --phenoFile phenotype_file_biomarkers.txt --covarFile covariates_file.txt --pred step1/fit_l1_pred.list --bsize 500 --out SNP_association/biomarkers_chr${i} ; done
+
+#Run regenie step 2 to test gene-burdens for association with clinical biomarkers.
+for i in $(seq 1 22); do regenie --step 2 --bed plink_exome_files_chr${i} --keep IDs_common.id --extract qc_pass_exome_gene_burden.snplist --phenoFile phenotype_file_biomarkers.txt --covarFile covariates_file.txt --anno-file Anno_file.txt --set-list Set_list.txt --mask-def Mask_file.txt --pred step1/fit_l1_pred.list --bsize 500 --out gene_burden/gene_burden_chr${i}  --vc-tests skat,skato,acato-full ; done
